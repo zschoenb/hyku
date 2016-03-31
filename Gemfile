@@ -57,7 +57,8 @@ group :development do
   gem 'spring'
 end
 
-gem 'sufia', github: 'projecthydra/sufia'
+#gem 'sufia', github: 'projecthydra/sufia'
+gem 'sufia', git: 'https://github.com/projecthydra/sufia.git', branch: 'master'
 gem 'rsolr', '~> 1.0.6'
 
 gem 'devise'
@@ -65,3 +66,10 @@ gem 'devise-guests', '~> 0.3'
 
 gem 'config'
 gem 'apartment'
+
+group :deployment do
+  gem 'capistrano', '~> 3.0'
+  gem 'capistrano-rails'
+  gem 'capistrano-passenger'
+  gem 'dlss-capistrano', '~> 3.1'
+end
