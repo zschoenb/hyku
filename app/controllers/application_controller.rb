@@ -32,6 +32,8 @@ class ApplicationController < ActionController::Base
     end
 
     def require_active_account!
+      return if devise_controller?
+
       raise Apartment::TenantNotFound, "No tenant for #{request.host}" unless current_account
     end
 
