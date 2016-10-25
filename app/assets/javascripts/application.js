@@ -20,6 +20,7 @@
 //= require peek/views/performance_bar
 // Required by Blacklight
 //= require blacklight/blacklight
+//= require cable
 
 //= require sufia
 //= require jquery.flot.pie
