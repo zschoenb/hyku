@@ -18,11 +18,11 @@ module Hyku
 
     # Returns true if the current controller happens to be one of the controllers that deals
     # with roles and permissions.  This is used to keep the parent section on the sidebar open.
-    def roles_and_permissions_section?
+    def users_and_groups_section?
       # we're using a case here because we need to differentiate UsersControllers
       # in different namespaces (Hyrax & Admin)
       case controller
-      when Admin::UsersController, RolesController
+      when Admin::UsersController
         true
       else
         false

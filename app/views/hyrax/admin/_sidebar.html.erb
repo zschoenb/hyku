@@ -67,20 +67,15 @@
       <span class="fa fa-sitemap"></span> <%= t('hyrax.admin.sidebar.admin_sets') %>
     <% end %>
 
-    <% if can?(:manage, Role) || can?(:manage, User) %>
+    <% if can?(:manage, User) %>
     <li>
       <a role="button" class="collapsed collapse-toggle" data-toggle="collapse" href="#collapseRoles" aria-expanded="false" aria-controls="collapseRoles">
         <span class="fa fa-users"></span>
-        <span><%= t('hyrax.admin.sidebar.roles_and_permissions') %></span>
+        <span><%= t('hyrax.admin.sidebar.users_and_groups') %></span>
       </a>
-      <% roles_and_perms_class = 'collapse ' unless menu.roles_and_permissions_section? %>
-      <ul class="<%= roles_and_perms_class %>nav nav-pills nav-stacked" id="collapseRoles">
-        <% if can? :manage, Role %>
-          <%= menu.nav_link(main_app.site_roles_path) do %>
-            <span class="fa fa-gavel"></span> <%= t('hyrax.admin.sidebar.manage_roles_and_permissions') %>
-          <% end %>
-        <% end %>
-
+      <% users_and_groups_class = 'collapse ' unless menu.users_and_groups_section? %>
+      <ul class="<%= users_and_groups_class %>nav nav-pills nav-stacked" id="collapseRoles">
+ <!-- TODO: waiting to add "Manage Groups" option here  -->
         <% if can? :manage, User %>
           <%= menu.nav_link(main_app.admin_users_path) do %>
             <span class="fa fa-user"></span> <%= t('hyrax.admin.sidebar.manage_users') %>
