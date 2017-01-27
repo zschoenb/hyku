@@ -1,24 +1,36 @@
 class AccountsController < ApplicationController
-  skip_before_action :require_active_account!
+  before_action :ensure_admin!
+  layout 'admin'
 
   load_and_authorize_resource
 
   # GET /accounts
   # GET /accounts.json
   def index
+    authorize! :manage, Account
+    add_breadcrumb t(:'hyrax.controls.home'), root_path
+    add_breadcrumb t(:'hyrax.toolbar.admin.menu'), hyrax.admin_path
+    add_breadcrumb t(:'hyrax.admin.sidebar.accounts'), accounts_path
   end
 
   # GET /accounts/1
   # GET /accounts/1.json
-  def show
-  end
+  def show; end
 
   # GET /accounts/new
   def new
+    add_breadcrumb t(:'hyrax.controls.home'), root_path
+    add_breadcrumb t(:'hyrax.toolbar.admin.menu'), hyrax.admin_path
+    add_breadcrumb t(:'hyrax.admin.sidebar.accounts'), accounts_path
+    add_breadcrumb 'New account', new_account_path
   end
 
   # GET /accounts/1/edit
   def edit
+    add_breadcrumb t(:'hyrax.controls.home'), root_path
+    add_breadcrumb t(:'hyrax.toolbar.admin.menu'), hyrax.admin_path
+    add_breadcrumb t(:'hyrax.admin.sidebar.accounts'), accounts_path
+    add_breadcrumb @account.tenant, edit_account_path(@account)
   end
 
   # POST /accounts
@@ -26,7 +38,7 @@ class AccountsController < ApplicationController
   def create
     respond_to do |format|
       if CreateAccount.new(@account).save
-        format.html { redirect_to first_user_registration_url, notice: 'Account was successfully created.' }
+        format.html { redirect_to @account, notice: 'Account was successfully created.' }
         format.json { render :show, status: :created, location: @account.cname }
       else
         format.html { render :new }
@@ -62,17 +74,17 @@ class AccountsController < ApplicationController
 
   private
 
-    def first_user_registration_url
-      new_user_registration_url(host: @account.cname)
+    def ensure_admin!
+      authorize! :read, :admin_dashboard
     end
 
     def create_params
-      params.require(:account).permit(:name)
+      params.require(:account).permit(:name, :title)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def account_params
-      params.require(:account).permit(:name, :cname,
+      params.require(:account).permit(:name, :cname, :title,
                                       solr_endpoint_attributes: [:id, :url],
                                       fcrepo_endpoint_attributes: [:id, :url, :base_path])
     end

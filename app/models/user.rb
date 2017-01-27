@@ -3,10 +3,10 @@ class User < ActiveRecord::Base
   # Connects this user object to Hydra behaviors.
   include Hydra::User
   # Connects this user object to Curation Concerns behaviors.
-  include CurationConcerns::User
-  # Connects this user object to Sufia behaviors.
-  include Sufia::User
-  include Sufia::UserUsageStats
+  include Hyrax::User
+  # Connects this user object to Hyrax behaviors.
+  include Hyrax::User
+  include Hyrax::UserUsageStats
 
   attr_accessible :email, :password, :password_confirmation if Blacklight::Utils.needs_attr_accessible?
   # Connects this user object to Blacklights Bookmarks.
@@ -43,6 +43,11 @@ class User < ActiveRecord::Base
     removed_roles.each do |r|
       remove_role r, Site.instance
     end
+  end
+
+  def groups
+    return ['admin'] if has_role?(:admin, Site.instance)
+    []
   end
 
   private

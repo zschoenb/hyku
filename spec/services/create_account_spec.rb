@@ -15,6 +15,7 @@ RSpec.describe CreateAccount do
         block.call
       end
 
+      expect(Hyrax::Workflow::WorkflowImporter).to receive(:load_workflows)
       subject.create_tenant
       expect(Site.reload.account).to eq account
     end

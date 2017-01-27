@@ -9,7 +9,8 @@ class CreateAccount
   end
 
   def save
-    account.save && create_external_resources
+    account.save &&
+      create_external_resources
   end
 
   def create_external_resources
@@ -25,6 +26,7 @@ class CreateAccount
   def create_tenant
     Apartment::Tenant.create(account.tenant) do
       initialize_account_data
+      Hyrax::Workflow::WorkflowImporter.load_workflows
     end
   end
 

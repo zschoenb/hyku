@@ -1,4 +1,5 @@
 module ApplicationHelper
-  include ::SufiaHelper
+  include ::HyraxHelper
   include ContentBlockHelper
+  include GroupNavigationHelper
 end

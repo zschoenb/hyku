@@ -12,6 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require turbolinks
 //= require peek
 //= require peek/views/faraday
@@ -19,4 +21,11 @@
 // Required by Blacklight
 //= require blacklight/blacklight
 
-//= require sufia
+//= require hyrax
+//= require jquery.flot.pie
+//= require flot_graph
+//= require statistics_tab_manager
+//= require blacklight_gallery/default
+
+//= require hyku/groups/per_page
+//= require hyku/groups/add_member

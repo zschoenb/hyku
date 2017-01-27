@@ -1,26 +1,34 @@
 Rails.application.routes.draw do
-  Hydra::BatchEdit.add_routes(self)
   mount BrowseEverything::Engine => '/browse'
-  resource :site, only: [:edit, :update] do
+  resource :site, only: [] do
     resources :roles, only: [:index, :update]
+    resource :content_blocks, only: [:edit, :update]
+    resource :labels, only: [:edit, :update]
+    resource :appearances, only: [:edit, :update]
   end
 
   resources :accounts
-  root 'sufia/homepage#index'
+
+  get '/account/sign_up' => 'account_sign_up#new'
+  post '/account/sign_up' => 'account_sign_up#create'
+
+  root 'hyrax/homepage#index'
 
   get 'splash', to: 'splash#index'
+  get 'status', to: 'status#index'
+  devise_for :users
 
   mount Blacklight::Engine => '/'
-  mount CurationConcerns::Engine, at: '/'
+  mount Hyrax::Engine, at: '/'
 
   concern :searchable, Blacklight::Routes::Searchable.new
   concern :exportable, Blacklight::Routes::Exportable.new
 
-  devise_for :users
-  Hydra::BatchEdit.add_routes(self)
-
-  curation_concerns_collections
-  curation_concerns_basic_routes
+  curation_concerns_basic_routes do
+    member do
+      get :manifest
+    end
+  end
   curation_concerns_embargo_management
 
   resource :catalog, only: [:index], as: 'catalog', path: '/catalog', controller: 'catalog' do
@@ -39,24 +47,23 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :admin do
+    resources :users, only: :index
+    resources :groups do
+      member do
+        get :remove
+      end
+
+      resources :users, only: [:index], controller: 'group_users' do
+        collection do
+          post :add
+          delete :remove
+        end
+      end
+    end
+  end
+
   mount Peek::Railtie => '/peek'
-
-  namespace :admin do
-    resources :features, only: [ :index ] do
-      resources :strategies, only: [ :update, :destroy ]
-    end
-  end
-
-  namespace :admin do
-    resources :features, only: [ :index ] do
-      resources :strategies, only: [ :update, :destroy ]
-    end
-  end
-
-  mount Flip::Engine => '/admin/features'
   mount Riiif::Engine => '/images', as: 'riiif'
 
-  # This must be the very last route in the file because it has a catch-all route for 404 errors.
-  # This behavior seems to show up only in production mode.
-  mount Sufia::Engine => '/'
 end

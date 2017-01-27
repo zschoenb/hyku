@@ -23,6 +23,15 @@ class Account < ActiveRecord::Base
     find_by(cname: canonical_cname(request.host))
   end
 
+  # @return [Account] a placeholder account using the default connections configured by the application
+  def self.single_tenant_default
+    Account.new do |a|
+      a.build_solr_endpoint
+      a.build_fcrepo_endpoint
+      a.build_redis_endpoint
+    end
+  end
+
   # Canonicalize the account cname or request host for comparison
   #
   # @param [String] host name
@@ -37,6 +46,7 @@ class Account < ActiveRecord::Base
     cname
   end
 
+  # Make all the account specific connections active
   def switch!
     solr_endpoint.switch! if solr_endpoint
     fcrepo_endpoint.switch! if fcrepo_endpoint
@@ -62,7 +72,7 @@ class Account < ActiveRecord::Base
       return unless name
 
       default_host = Settings.multitenancy.default_host
-      default_host % { tenant: name.parameterize }
+      format(default_host, tenant: name.parameterize)
     end
 
     def canonicalize_cname

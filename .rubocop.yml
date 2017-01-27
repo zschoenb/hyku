@@ -1,5 +1,11 @@
 # Turn on RSpec cops
 require: rubocop-rspec
+inherit_from: .rubocop_todo.yml
+
+# With the rubocop 0.47.0 and rubocop-rspec 1.8.0 the following stderr message was sent:
+#   An error occurred while RSpec/DescribedClass cop was inspecting path/to/file
+RSpec/DescribedClass:
+  Enabled: false
 
 AllCops:
   DisplayCopNames: true
@@ -19,13 +25,22 @@ AllCops:
 Rails:
   Enabled: true
 
+Rails/DynamicFindBy:
+  Exclude:
+    - 'lib/importer/factory/object_factory.rb'
+
 Metrics/LineLength:
   Max: 120
   Exclude:
     - 'app/controllers/catalog_controller.rb'
+    - 'spec/controllers/curation_concerns/generic_works_controller_spec.rb'
+    - 'spec/services/iiif_thumbnail_path_service_spec.rb'
 
 Style/IndentationConsistency:
   EnforcedStyle: rails
+
+Style/DotPosition:
+  EnforcedStyle: leading
 
 Style/Documentation:
   Enabled: false
@@ -47,11 +62,46 @@ Rails/HasAndBelongsToMany:
 RSpec/AnyInstance:
   Enabled: false
 
+RSpec/NamedSubject:
+  Enabled: false
+
 RSpec/DescribeClass:
   Exclude:
+    - 'spec/requests/**/*'
     - 'spec/features/**/*'
     - 'spec/views/**/*'
+    - 'spec/routing/**/*'
 
 RSpec/FilePath:
   Exclude:
     - 'spec/routing/**/*'
+
+RSpec/ExpectActual:
+  Exclude:
+    - 'spec/routing/**/*'
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MessageExpectation:
+  Enabled: false
+
+# By default RSpec/MessageSpies has the following:
+#   Prefer have_received for setting message expectations. Setup form as a spy using allow or instance_spy.
+RSpec/MessageSpies:
+  Enabled: true
+  EnforcedStyle: receive
+
+RSpec/ExampleLength:
+  Max: 16
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'app/controllers/catalog_controller.rb'

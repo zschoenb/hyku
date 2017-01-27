@@ -1,12 +1,9 @@
 class CatalogController < ApplicationController
   include Hydra::Catalog
   include Hydra::Controller::ControllerBehavior
-  include Sufia::Catalog
-  include BlacklightAdvancedSearch::Controller
 
-  # These before_filters apply the hydra access controls
+  # These before_action filters apply the hydra access controls
   before_action :enforce_show_permissions, only: :show
-  skip_before_action :default_html_head
 
   def self.uploaded_field
     solr_name('system_create', :stored_sortable, type: :date)
@@ -30,7 +27,7 @@ class CatalogController < ApplicationController
     config.advanced_search[:query_parser] ||= 'dismax'
     config.advanced_search[:form_solr_parameters] ||= {}
 
-    config.search_builder_class = Sufia::SearchBuilder
+    config.search_builder_class = Hyrax::CatalogSearchBuilder
 
     # Show gallery view
     config.view.gallery.partials = [:index_header, :index]
@@ -316,5 +313,11 @@ class CatalogController < ApplicationController
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
     config.spell_max = 5
+  end
+
+  # This is overridden just to give us a JSON response for debugging.
+  def show
+    _, @document = fetch params[:id]
+    render json: @document.to_h
   end
 end

@@ -45,14 +45,14 @@ RSpec.describe Account, type: :model do
     end
 
     it 'switches the Redis namespace' do
-      expect(Sufia.config.redis_namespace).to eq 'foobaz'
+      expect(Hyrax.config.redis_namespace).to eq 'foobaz'
     end
   end
 
   describe '#switch' do
     let!(:previous_solr_connection) { Blacklight.default_index }
     let!(:previous_fcrepo_connection) { ActiveFedora.fedora }
-    let!(:previous_redis_namespace) { 'hybox' }
+    let!(:previous_redis_namespace) { 'hyku' }
 
     before do
       subject.build_solr_endpoint.update(url: 'http://example.com/solr/')
@@ -66,7 +66,7 @@ RSpec.describe Account, type: :model do
         expect(ActiveFedora::SolrService.instance.conn.uri.to_s).to eq 'http://example.com/solr/'
         expect(ActiveFedora.fedora.host).to eq 'http://example.com/fedora'
         expect(ActiveFedora.fedora.base_path).to eq '/dev'
-        expect(Sufia.config.redis_namespace).to eq 'foobaz'
+        expect(Hyrax.config.redis_namespace).to eq 'foobaz'
       end
     end
 
@@ -77,7 +77,7 @@ RSpec.describe Account, type: :model do
 
       expect(ActiveFedora::SolrService.instance.conn.uri.to_s).to eq 'http://127.0.0.1:8985/solr/hydra-test/'
       expect(ActiveFedora.fedora.host).to eq 'http://127.0.0.1:8986/rest'
-      expect(Sufia.config.redis_namespace).to eq previous_redis_namespace
+      expect(Hyrax.config.redis_namespace).to eq previous_redis_namespace
     end
   end
 

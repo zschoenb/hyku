@@ -16,8 +16,21 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'active_fedora/noid/rspec'
+require 'webmock/rspec'
 
 RSpec.configure do |config|
+  include ActiveFedora::Noid::RSpec
+
+  config.before(:suite) do
+    WebMock.disable_net_connect!(allow_localhost: true)
+    disable_production_minter!
+  end
+
+  config.after(:suite) do
+    enable_production_minter!
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -83,6 +96,9 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = :random
+
+  # Give us a full backtrace on Travis-CI
+  config.backtrace_exclusion_patterns = [] if ENV['CI']
 
   # Seed global randomization in this process using the `--seed` CLI option.
   # Setting this allows you to use `--seed` to deterministically reproduce
