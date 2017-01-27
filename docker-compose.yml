@@ -83,6 +83,21 @@ services:
     networks:
       internal:
 
+  # ZACH'S COMMENT: 
+  # Fedora is consistently reported "down" by Hyky admin console.
+  # I altered JAVA_OPTS in several ways to attempt a fix:
+  # 1. Tried to EXPORT JAVA_OPTS='[some basic heap size constraints]' # fcrepo rejected custom heap sizes
+  # 2. Tried environment: - JAVA_OPTS = "${JAVA_OPTS}" adding contents of repository.json directly to the host environment. fcrepo rejected this too.
+  # 3. Best config was without including host settings:
+    # -JAVA_OPTS="-Dfcrepo.modeshape.configuration=\"classpath:/config/minimal-default/repository.json\""
+    # # 
+  
+  # Tomcat (Catalina) logs report an error, but continues to run:
+  
+# fcrepo_1 | 26-Jan-2017 22:25:41.058 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployWAR Deploying web application archive /usr/local/tomcat/webapps/fcrepo.war
+# fcrepo_1 | 26-Jan-2017 22:25:41.597 WARNING [localhost-startStop-1] org.apache.catalina.webresources.Cache.getResource Unable to add the resource at [/WEB-INF/lib/commons-validator-1.3.1.jar] to the cache because there was insufficient free space available after evicting expired cache entries - consider increasing the maximum size of the cache
+# fcrepo_1 | 26-Jan-2017 22:25:41.608 WARNING [localhost-startStop-1] org.apache.catalina.webresources.Cache.getResource Unable to add the resource at [/WEB-INF/lib/modeshape-common-4.5.0.Final.jar] to the cache because there was insufficient free space available after evicting expired cache entries - consider increasing the maximum size of the cache
+    
   fcrepo:
     image: cbeer/fcrepo4
     expose:
@@ -101,6 +116,8 @@ services:
     networks:
       internal:
 
+# Zach:
+# the app container dies, but it doesn't appear to die on error
   app:
     build: .
     environment:
@@ -121,6 +138,9 @@ services:
       - app:/data/public/uploads
     networks:
       internal:
+
+# Zach:
+# this containers persists, is outward facing, and stores the app.
 
   web:
     extends: app
@@ -200,6 +220,16 @@ services:
       internal:
         aliases:
           - redis_cluster
+
+# Redit_sentinal container fails on config
+# I haven't tried anything to fix this.
+
+# redis_sentinel_1  | *** FATAL CONFIG FILE ERROR ***
+# redis_sentinel_1  | Reading the configuration file, at line 10
+# redis_sentinel_1  | >>> 'sentinel monitor redis_cluster redis_primary 6379 2'
+# redis_sentinel_1  | Duplicated master name.
+# hyku_redis_sentinel_1 exited with code 1
+
 
   redis_sentinel:
     image: s7anley/redis-sentinel-docker
