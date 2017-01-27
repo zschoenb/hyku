@@ -18,6 +18,9 @@ services:
     build: .
     restart: unless-stopped
     environment:
+      # ZACHS COMMENT: not sure about solr & fedora located at same port. 
+      # tried changing fedora:8983 to fedora:8984 here and in docker-compose.yml -- no help
+      # solr & fedora exist in seperate containers, so why the same port?
       - REDIS_HOST=redis_cluster
       - DATABASE_URL=postgresql://postgres@db/postgres
       - FEDORA_URL=http://fcrepo:8983/fedora/rest
