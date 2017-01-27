@@ -28,6 +28,8 @@ https://github.com/hybox/aws
 
 ### With Docker
 
+Zach: This fork includes comments in docker-compose-base.yml & docker-compose.yml describing issues and attempted fixes from my experience testing Docker implementation of HyKu. I would add that that docker app ran consistent errors referring to sidekiq. The containerized nature of the docker made it difficult to fix services on-the-fly without restarting the service and thus killing the container in the process. The fixes need to come from the congifuration, which requries a better grip on docker than I've got.
+
 We distribute a `docker-compose.yml` configuration for running the Hyku stack and application using docker. Once you have [docker](https://docker.com) installed and running, launch the stack using e.g.:
 
 ```bash
